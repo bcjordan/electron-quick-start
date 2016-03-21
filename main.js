@@ -5,6 +5,46 @@ const electron = require('electron');
 const app = electron.app;
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow;
+const five = require('johnny-five');
+
+const serial = require('serial-worker');
+
+serial.list((e, ports)=> {
+  console.log("Port list:");
+  console.log(ports);
+
+  var boardPorts = ports.filter((p) => p.comName.match('usbmodem'));
+
+  console.log("Identified USB serial ports:");
+  console.log(boardPorts);
+
+  var port = new serial.SerialPort(boardPorts[0].comName, { baudrate: 57600}, true, function (e) {
+    console.log("Serial port initialized.");
+    console.log(e);
+
+    const board = new five.Board({
+      port: port,
+      repl: false
+    });
+
+    board.on('ready', () => {
+      console.log("Board ready.");
+      var led = new five.Led(13);
+      led.blink();
+    });
+  });
+
+  port.on('data', (data)=> {
+    console.log(data);
+  });
+
+  port.open(()=> {
+    port.write(new Buffer('Hello!', 'utf8'), ()=> {
+      console.log('Written!');
+    });
+  });
+});
+
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.

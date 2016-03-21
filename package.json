@@ -23,6 +23,8 @@
   },
   "homepage": "https://github.com/atom/electron-quick-start#readme",
   "devDependencies": {
-    "electron-prebuilt": "^0.36.0"
+    "electron-prebuilt": "^0.36.0",
+    "johnny-five": "^0.9.34",
+    "serial-worker": "^1.0.3"
   }
 }
